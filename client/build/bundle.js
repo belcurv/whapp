@@ -253,7 +253,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* view.js 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* view.js
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         handles rendering and DOM events.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         uses the template strings, feeds them data, and adds their output
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         to the right DOM elements.
@@ -284,4 +284,6 @@ var View = function () {
 
 exports.default = View;
 
-},{"./template":5}]},{},[2]);
+},{"./template":5}]},{},[2])
+
+//# sourceMappingURL=bundle.js.map

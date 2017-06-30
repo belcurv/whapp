@@ -1,4 +1,4 @@
-/* view.js 
+/* view.js
    handles rendering and DOM events.
    uses the template strings, feeds them data, and adds their output
    to the right DOM elements.
