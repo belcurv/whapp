@@ -1,0 +1,28 @@
+html,
+body {
+    margin: 0;
+    padding: .5em;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    text-align: left;
+    border-bottom: 2px solid #333;
+}
+
+th,
+td {
+    padding: .5em;
+}
+
+tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
