@@ -3,8 +3,9 @@
 /*  ======================== API Route Descriptions ====================
     VERB      URL                         DESCRIPTION
     --------------------------------------------------------------------
-    GET       /api/profiles                 Get all of the profiles
+    GET       /api/profiles                 Get all profiles
     GET       /api/profiles/:id             Get a single profile
+    GET       /api/team/:team_id            Get all profiles for 1 team
 */
 
 const routes   = require('express').Router(),
@@ -35,13 +36,30 @@ routes.get('/api/profiles/:id', (req, res) => {
         if (err) throw err;
         
         return res
-            .status(200)      // even though just 1 profile, return as array
-            .json([profile]);   // so view can loop through to build the table.
+            .status(200)       // even though just 1 profile, return as array
+            .json([profile]);  // so view can loop through to build the table.
         
     });
     
 });
 
+
+// GET one team's profiles
+routes.get('/api/team/:team_id', (req, res) => {
+    
+    let target_team = req.params.team_id;
+    
+    Profile.find({ team_id: target_team }, (err, profiles) => {
+        
+        if (err) throw err;
+        
+        return res
+            .status(200)
+            .json(profiles);
+        
+    });
+    
+});
 
 
 module.exports = routes;
