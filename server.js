@@ -4,6 +4,15 @@
  * Whapp Whobot Data Viewer API © 2017 - Jay Schwane
 */
 
+console.log('======================== API Route Descriptions ====================');
+console.log('VERB      URL                           DESCRIPTION');
+console.log('--------------------------------------------------------------------');
+console.log('GET       /api/profiles                 Get all profiles');
+console.log('GET       /api/profiles/:id             Get a single profile');
+console.log('GET       /api/team/:team_id            Get all profiles for 1 team');
+
+
+
 /* ================================= SETUP ================================= */
 
 const express       = require('express'),

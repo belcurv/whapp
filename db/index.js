@@ -7,7 +7,8 @@ const dotenv = require('dotenv').config(),
 module.exports = {
     
     getDbConnectionString: function () {
-        return `mongodb://${dbuser}:${dbpwd}@ds127260.mlab.com:27260/whobot`;
+        // return `mongodb://${dbuser}:${dbpwd}@ds127260.mlab.com:27260/whobot`;
+        return "mongodb://localhost:27017/whobot";
     }
     
 };
