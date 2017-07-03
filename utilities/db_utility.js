@@ -37,7 +37,8 @@ function displayAvailableCommands() {
   console.log('2. Display contents of database');
   console.log('3. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
   console.log('4. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
-  console.log('      When you are finished, please type "quit"');
+  console.log('5. Display all skills in database');
+  console.log('\n      When you are finished, please type "quit"\n');
 }
 
 logTitleSplash();
@@ -59,17 +60,20 @@ process.stdin.on('data', function (text) {
       normalizeSkillsAgainstDataDictionary();
       break;
     case '2':
-      fetchAllProfiles(displayDocuments);
+      fetchAllProfiles(displayResults);
       break;
     case '3':
       console.log('\n');
-      if ( fetchProfileByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
-      else fetchProfileByUserName(id, displayDocuments);
+      if ( fetchProfileByUserId(id, displayResults) ) ; // condition automatically console logs if true
+      else fetchProfileByUserName(id, displayResults);
       break;
     case '4':
       console.log('\n');
-      if ( fetchProfilesByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
-      else fetchProfilesByTeamName(id, displayDocuments);
+      if ( fetchProfilesByTeamId(id, displayResults) ) ; // condition automatically console logs if true
+      else fetchProfilesByTeamName(id, displayResults);
+      break;
+    case '5':
+      fetchAllSkills(displayResults);
       break;
     default:
       console.log('That was not one of the options.\n');
@@ -87,6 +91,24 @@ function getCommand(text) {
 function done() {
 	console.log('Goodbye');
 	process.exit();
+}
+
+function fetchAllSkills(callback) {
+    Profile.find( (err, profiles) => {
+        if (err) throw err;
+
+        let all_skills = [];
+        
+        profiles.forEach((profile) => {
+          profile["skills"].forEach(function(skill) {
+            if ( all_skills.indexOf(skill + '\n') < 0 ) {
+              all_skills.push(skill + '\n');
+            }
+          });
+        });
+
+        callback(all_skills.sort());
+    });
 }
 
 function normalizeSkillsAgainstDataDictionary() {
@@ -133,9 +155,9 @@ function replaceUserSkills(_id, replacement_skills, callback) {
   Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
 }
 
-function displayDocuments(documents) {
-  if ( documents !== null ) {
-    console.log(documents + '\n');
+function displayResults(results) {
+  if ( results !== null ) {
+    console.log('\n' + results + '\n');
     displayAvailableCommands();
   }
 }
