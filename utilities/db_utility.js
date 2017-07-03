@@ -9,10 +9,11 @@
  *   Change `getDbConnectionString()` to modify this
 */
 
-const db       = require('../db/index'),
-      mongoose = require('mongoose'),
-      util     = require('util'),
-      Profile  = require('../models/profile_model');
+const db              = require('../db/index'),
+      mongoose        = require('mongoose'),
+      util            = require('util'),
+      data_dictionary = require('../data_dictionary/dataDictionary'),
+      Profile         = require('../models/profile_model');
 
 /* ============================= CONNECT TO DB ============================= */
 mongoose.connect(db.getDbConnectionString());
@@ -52,7 +53,7 @@ process.stdin.on('data', function (text) {
 		done();
 	}
   else if ( command == '1' ) {
-    console.log(normalizeSkillsAgainstDataDictionary());
+    normalizeSkillsAgainstDataDictionary();
   }
   else if ( command == '2' ) {
     fetchAllProfiles(displayDocuments);
@@ -86,20 +87,28 @@ function done() {
 }
 
 function normalizeSkillsAgainstDataDictionary() {
-  // iterate through all profiles passed to this function
-  // get the user's skill list, as a local temporary array
-  // iterate through all skills in temporary array, make a new sanitized array with fetchSkill
-  //   TEST: console.log the old and the new skills arrays
-  //   QA:   update the user's skill list with the new array.
+  // [x] iterate through all profiles passed to this function
+  // [x] get the user's skill list, as a local temporary array
+  // [x] iterate through all skills in temporary array, make a new sanitized array with fetchSkill
+  // [x]   TEST: console.log the old and the new skills arrays
+  // [ ]   QA:   update the user's skill list with the new array.
   fetchAllProfiles( (profiles) => {
     for (let profile in profiles) {
       let old_skills = profiles[profile].skills,
           new_skills = [];
-      console.log(profiles[profile].skills);
+      old_skills.forEach( (skill) => {
+        if ( skill == getNormalizedSkill(skill) ) {
+          new_skills.push(skill);
+        } else {
+          new_skills.push(getNormalizedSkill(skill));
+        }
+      });
+      console.log(old_skills);
+      console.log(new_skills);
     }
+    console.log('\n');
+    displayAvailableCommands();
   });
-
-  return 'normalize';
 }
 
 function displayDocuments(documents) {
@@ -144,3 +153,14 @@ function fetchDocumentsByTeamName(team_domain, callback) {
   });
 }
 
+function getNormalizedSkill(current_skill) {
+  var match_skill = current_skill;
+  for (var skill in data_dictionary) {
+    data_dictionary[skill].forEach(function (name_variant) {
+      if (current_skill.toLowerCase() === name_variant) {
+        match_skill = skill;
+      }
+    });
+  }
+  return match_skill;
+};
