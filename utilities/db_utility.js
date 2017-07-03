@@ -1,9 +1,10 @@
 /* jshint esversion:6, node:true */
 
 /**
- * Maintain database via command line
+ * https://whapp.herokuapp.com/
+ * Maintain Whobot database via command line
  *
- * Copyright © 2017 Peter Martinson
+ * © 2017 Jay Schwane & Peter Martinson
  *
  *   Currently, this connects to DEV version of db
  *   Change `getDbConnectionString()` in ../db/index to modify this
@@ -33,11 +34,13 @@ function logTitleSplash() {
 
 function displayAvailableCommands() {
   console.log('Type in the number of the procedure you wish to execute:');
-  console.log('1. Display contents of database');
-  console.log('2. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
-  console.log('3. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
-  console.log('4. Display all skills in database');
-  console.log('6. Normalize skills in database against a new Data Dictionary');
+  console.log('<1> Display contents of database');
+  console.log('<2> Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
+  console.log('<3> Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
+  console.log('<4> Display all skills in database');
+  console.log('<6> Normalize skills in database against a new Data Dictionary');
+  console.log('<P> Connect to the production database');
+  console.log('<D> Connect to the development database');
   console.log('\n      When you are finished, please type "quit"\n');
 }
 
@@ -74,6 +77,10 @@ process.stdin.on('data', function (text) {
       break;
     case '6':
       normalizeSkillsAgainstDataDictionary();
+      break;
+    case 'P':
+      break;
+    case 'D':
       break;
     default:
       console.log('That was not one of the options.\n');
