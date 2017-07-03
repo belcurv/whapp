@@ -17,8 +17,8 @@ export default class Controller {
     
     setView() {
         console.log('controller setView fired');
-        this.model.getProfiles()
-            .then( data => this.render(data));
+        this.model.getTeamSkills('T3BC1RPPH')
+            .then( data => this.render(data) );
     }
     
 }

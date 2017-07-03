@@ -31,7 +31,7 @@ var Controller = function () {
             var _this = this;
 
             console.log('controller setView fired');
-            this.model.getProfiles().then(function (data) {
+            this.model.getTeamSkills('T3BC1RPPH').then(function (data) {
                 return _this.render(data);
             });
         }
@@ -96,6 +96,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _service = require('./service');
 
+var _util = require('./util');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Model = function () {
@@ -109,10 +111,21 @@ var Model = function () {
 
     _createClass(Model, [{
         key: 'getProfiles',
-        value: function getProfiles() {
-            return (0, _service.getJSON)('/api/team/T3BC1RPPH').then(function (profiles) {
-                console.log('profiles from model.js', profiles);
+        value: function getProfiles(team) {
+            return (0, _service.getJSON)('/api/team/' + team).then(function (profiles) {
+                //                console.log('Profiles from model.js', profiles);
                 return profiles;
+            });
+        }
+
+        /* fetch team skills*/
+
+    }, {
+        key: 'getTeamSkills',
+        value: function getTeamSkills(team) {
+            return (0, _service.getJSON)('/api/team/' + team).then(function (profiles) {
+                var skillsMap = (0, _util.mapSkillCounts)(profiles);
+                return (0, _util.makeFormattedSkillsArr)(skillsMap);
             });
         }
     }]);
@@ -122,7 +135,7 @@ var Model = function () {
 
 exports.default = Model;
 
-},{"./service":4}],4:[function(require,module,exports){
+},{"./service":4,"./util":6}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -176,8 +189,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _templateObject = _taggedTemplateLiteral(['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n'], ['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n']),
-    _templateObject2 = _taggedTemplateLiteral(['\n    <table class="table">\n        <thead>\n            <th>Team</th>\n            <th>Team Member</th>\n            <th>Last Updated</th>\n            <th>Total Skills</th>\n            <th>Skills</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n'], ['\n    <table class="table">\n        <thead>\n            <th>Team</th>\n            <th>Team Member</th>\n            <th>Last Updated</th>\n            <th>Total Skills</th>\n            <th>Skills</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n']);
+var _templateObject = _taggedTemplateLiteral(['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n'], ['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n']),
+    _templateObject2 = _taggedTemplateLiteral(['\n    <table class="table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n'], ['\n    <table class="table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -214,15 +227,38 @@ var html = function html(literalsArr) {
 
 /* template that returns a 'tr'
 */
-var table_row = function table_row(profile) {
-    return html(_templateObject, profile.team_domain, profile.user_name, profile.timestamp.slice(3, 15), profile.skills.length, profile.skills.join(', '));
+//const table_row = (profile) => html `
+//    <tr>
+//        <td>${profile.team_domain}</td>
+//        <td>${profile.user_name}</td>
+//        <td>${(profile.timestamp).slice(3,15)}</td>
+//        <td>${profile.skills.length}</td>
+//        <td>${profile.skills.join(', ')}</td>
+//    </tr>
+//`;
+var table_row = function table_row(skill) {
+    return html(_templateObject, skill.skill, skill.count);
 };
 
 /* template that loops over the array of profiles adding a 'tr' for each
 */
+//const table_template = (data) => html `
+//    <table class="table">
+//        <thead>
+//            <th>Team</th>
+//            <th>Team Member</th>
+//            <th>Last Updated</th>
+//            <th>Total Skills</th>
+//            <th>Skills</th>
+//        </thead>
+//        <tbody>
+//            ${data.map( profile => table_row(profile) )}
+//        </tbody>
+//    </table>
+//`;
 var table_template = function table_template(data) {
-    return html(_templateObject2, data.map(function (profile) {
-        return table_row(profile);
+    return html(_templateObject2, data.map(function (skill) {
+        return table_row(skill);
     }));
 };
 
@@ -244,7 +280,42 @@ var $on = function $on(target, event, handler) {
     return target.addEventListener(event, handler);
 };
 
+/* build map of unique skills and counts
+ * 
+ * @params    [array]   profiles   [array of profile objects]
+ * @returns   [object]             [map of unique skills and counts]
+*/
+var mapSkillCounts = function mapSkillCounts(profiles) {
+    var skillCounts = {};
+    profiles.forEach(function (profile) {
+        profile.skills.forEach(function (skill) {
+            if (skillCounts[skill]) {
+                skillCounts[skill] += 1;
+            } else {
+                skillCounts[skill] = 1;
+            }
+        });
+    });
+    return skillCounts;
+};
+
+/* build formatted array of skill & count objects
+ * 
+ * @params    [object]   inputObj   [map of unique skills and counts]
+ * @returns   [array]               [array of skill & count objects]
+*/
+var makeFormattedSkillsArr = function makeFormattedSkillsArr(inputObj) {
+    return Object.keys(inputObj).map(function (key) {
+        return {
+            skill: key,
+            count: inputObj[key]
+        };
+    });
+};
+
 exports.$on = $on;
+exports.mapSkillCounts = mapSkillCounts;
+exports.makeFormattedSkillsArr = makeFormattedSkillsArr;
 
 },{}],7:[function(require,module,exports){
 'use strict';

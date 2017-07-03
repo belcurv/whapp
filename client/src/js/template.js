@@ -29,33 +29,53 @@ const html = (literalsArr, ...cooked) => {
 
 /* template that returns a 'tr'
 */
-const table_row = (profile) => html `
+//const table_row = (profile) => html `
+//    <tr>
+//        <td>${profile.team_domain}</td>
+//        <td>${profile.user_name}</td>
+//        <td>${(profile.timestamp).slice(3,15)}</td>
+//        <td>${profile.skills.length}</td>
+//        <td>${profile.skills.join(', ')}</td>
+//    </tr>
+//`;
+const table_row = (skill) => html `
     <tr>
-        <td>${profile.team_domain}</td>
-        <td>${profile.user_name}</td>
-        <td>${(profile.timestamp).slice(3,15)}</td>
-        <td>${profile.skills.length}</td>
-        <td>${profile.skills.join(', ')}</td>
+        <td>${skill.skill}</td>
+        <td>${skill.count}</td>
     </tr>
 `;
 
 
 /* template that loops over the array of profiles adding a 'tr' for each
 */
+//const table_template = (data) => html `
+//    <table class="table">
+//        <thead>
+//            <th>Team</th>
+//            <th>Team Member</th>
+//            <th>Last Updated</th>
+//            <th>Total Skills</th>
+//            <th>Skills</th>
+//        </thead>
+//        <tbody>
+//            ${data.map( profile => table_row(profile) )}
+//        </tbody>
+//    </table>
+//`;
 const table_template = (data) => html `
     <table class="table">
         <thead>
-            <th>Team</th>
-            <th>Team Member</th>
-            <th>Last Updated</th>
-            <th>Total Skills</th>
-            <th>Skills</th>
+            <th>Skill</th>
+            <th>Count</th>
         </thead>
         <tbody>
-            ${data.map( profile => table_row(profile) )}
+            ${data.map( skill => table_row(skill) )}
         </tbody>
     </table>
 `;
+
+
+
 
 //console.log(table_template(temp_data));
 
