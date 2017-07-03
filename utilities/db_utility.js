@@ -1,12 +1,14 @@
 /* jshint esversion:6, node:true */
 
 /**
- * module to facilitate command line interaction
+ * Maintain database via command line
  *
  * Copyright © 2017 Peter Martinson
+ *
+ *   Currently, this connects to DEV version of db
+ *   Change `getDbConnectionString()` to modify this
 */
 
-logTitleSplash();
 const db       = require('../db/index'),
       mongoose = require('mongoose'),
       util     = require('util'),
@@ -16,33 +18,55 @@ const db       = require('../db/index'),
 mongoose.connect(db.getDbConnectionString());
 mongoose.Promise = global.Promise;
 
+/* ============================= INSTRUCTIONS ============================== */
+function logTitleSplash() {
+	console.log('           __          __          __ ');
+	console.log(' _      __/ /_  ____  / /_  ____  / /_');
+	console.log('| | /| / / __ \\/ __ \\/ __ \\/ __ \\/ __/');
+	console.log('| |/ |/ / / / / /_/ / /_/ / /_/ / /_  ');
+	console.log('|__/|__/_/ /_/\\____/_.___/\\____/\\__/  ');
+	console.log('\n');
+	console.log('Welcome to the /whobot database utility.\n');
+  displayAvailableCommands();
+}
+
+function displayAvailableCommands() {
+  console.log('Type in the number of the procedure you wish to execute:');
+  console.log('1. Normalize skills in database against a new Data Dictionary');
+  console.log('2. Display contents of database');
+  console.log('3. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
+  console.log('4. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
+  console.log('      When you are finished, please type "quit"');
+}
+
+logTitleSplash();
+
 /* =========================== OPEN STDIN STREAM =========================== */
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
 process.stdin.on('data', function (text) {
+  let command = getCommand(text).substring(0,1);
 
 	if ( getCommand(text) === 'quit') {
 		done();
 	}
-  else if ( getCommand(text) == '1' ) {
+  else if ( command == '1' ) {
     console.log(normalizeSkillsAgainstDataDictionary());
   }
-  else if ( getCommand(text) == '2' ) {
-    fetchAllDatabaseDocuments(displayDocuments);
+  else if ( command == '2' ) {
+    fetchAllProfiles(displayDocuments);
   }
-  else if ( getCommand(text).substring(0,1) == '3' ) {
+  else if ( command == '3' ) {
     let id = getCommand(text).substring(2);
     console.log('\n');
-    if ( fetchDocumentByUserId(id, displayDocuments) )
-      ; // condition automatically console logs if true
+    if ( fetchDocumentByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
     else fetchDocumentByUserName(id, displayDocuments);
   }
-  else if ( getCommand(text).substring(0,1) == '4' ) {
+  else if ( command == '4' ) {
     let id = getCommand(text).substring(2);
     console.log('\n');
-    if ( fetchDocumentsByTeamId(id, displayDocuments) )
-      ; // condition automatically console logs if true
+    if ( fetchDocumentsByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
     else fetchDocumentsByTeamName(id, displayDocuments);
   }
   else {
@@ -61,42 +85,31 @@ function done() {
 	process.exit();
 }
 
-function displayAvailableCommands() {
-  console.log('Type in the number of the procedure you wish to execute:');
-  console.log('1. Normalize skills in database against a new Data Dictionary');
-  console.log('2. Display contents of database');
-  console.log('3. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
-  console.log('4. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
-  console.log('      When you are finished, please type "quit"');
-}
-
-function logTitleSplash() {
-	console.log('           __          __          __ ');
-	console.log(' _      __/ /_  ____  / /_  ____  / /_');
-	console.log('| | /| / / __ \\/ __ \\/ __ \\/ __ \\/ __/');
-	console.log('| |/ |/ / / / / /_/ / /_/ / /_/ / /_  ');
-	console.log('|__/|__/_/ /_/\\____/_.___/\\____/\\__/  ');
-	console.log('\nWelcome to the /whobot database utility.\n');
-  displayAvailableCommands();
-}
-
-function openDatabaseConnection() {
-  console.log('Database Login:');
-}
-/* =========================== DATABASE FUNCTIONS =========================== */
-
 function normalizeSkillsAgainstDataDictionary() {
+  // iterate through all profiles passed to this function
+  // get the user's skill list, as a local temporary array
+  // iterate through all skills in temporary array, make a new sanitized array with fetchSkill
+  //   TEST: console.log the old and the new skills arrays
+  //   QA:   update the user's skill list with the new array.
+  fetchAllProfiles( (profiles) => {
+    for (let profile in profiles) {
+      let old_skills = profiles[profile].skills,
+          new_skills = [];
+      console.log(profiles[profile].skills);
+    }
+  });
+
   return 'normalize';
 }
 
 function displayDocuments(documents) {
-  if ( documents != null ) {
+  if ( documents !== null ) {
     console.log(documents + '\n');
     displayAvailableCommands();
   }
 }
 
-function fetchAllDatabaseDocuments(callback) {
+function fetchAllProfiles(callback) {
   Profile.find( (err, profiles) => {
     if (err) throw err;
     callback(profiles);
