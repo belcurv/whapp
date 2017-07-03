@@ -63,13 +63,13 @@ process.stdin.on('data', function (text) {
       break;
     case '3':
       console.log('\n');
-      if ( fetchDocumentByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
-      else fetchDocumentByUserName(id, displayDocuments);
+      if ( fetchProfileByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
+      else fetchProfileByUserName(id, displayDocuments);
       break;
     case '4':
       console.log('\n');
-      if ( fetchDocumentsByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
-      else fetchDocumentsByTeamName(id, displayDocuments);
+      if ( fetchProfilesByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
+      else fetchProfilesByTeamName(id, displayDocuments);
       break;
     default:
       console.log('That was not one of the options.\n');
@@ -90,28 +90,47 @@ function done() {
 }
 
 function normalizeSkillsAgainstDataDictionary() {
-  // [x] iterate through all profiles passed to this function
-  // [x] get the user's skill list, as a local temporary array
-  // [x] iterate through all skills in temporary array, make a new sanitized array with fetchSkill
-  // [x]   TEST: console.log the old and the new skills arrays
-  // [ ]   QA:   update the user's skill list with the new array.
   fetchAllProfiles( (profiles) => {
+    let count_modified = 0;
     for (let profile in profiles) {
       let old_skills = profiles[profile].skills,
-          new_skills = [];
+          new_skills = [],
+          _id = profiles[profile]._id,
+          user_name = profiles[profile].user_name,
+          changed = 0;
+
+      // populate new_skills array with normalized skills
       old_skills.forEach( (skill) => {
         if ( skill == getNormalizedSkill(skill) ) {
           new_skills.push(skill);
         } else {
           new_skills.push(getNormalizedSkill(skill));
+          changed = 1;
         }
       });
-      console.log(old_skills);
-      console.log(new_skills);
+
+      // update the profile
+      replaceUserSkills(_id, new_skills, (err, log) => {
+        if (err) throw err;
+      });
+
+      if ( changed ) {
+        count_modified++;
+      }
+
+    } // for
+
+    if ( count_modified ) {
+      console.log(`${count_modified} profiles have been updated.\n`);
+    } else {
+      console.log('no profiles updated\n');
     }
-    console.log('\n');
     displayAvailableCommands();
   });
+}
+
+function replaceUserSkills(_id, replacement_skills, callback) {
+  Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
 }
 
 function displayDocuments(documents) {
@@ -128,28 +147,28 @@ function fetchAllProfiles(callback) {
   });
 }
 
-function fetchDocumentByUserId(user_id, callback) {
+function fetchProfileByUserId(user_id, callback) {
   Profile.findOne({ user_id : user_id }, (err, profile) => {
     if (err) throw err;
     callback(profile);
   });
 }
 
-function fetchDocumentByUserName(user_name, callback) {
+function fetchProfileByUserName(user_name, callback) {
   Profile.findOne({ user_name : user_name }, (err, profile) => {
     if (err) throw err;
     callback(profile);
   });
 }
 
-function fetchDocumentsByTeamId(team_id, callback) {
+function fetchProfilesByTeamId(team_id, callback) {
   Profile.find({ team_id : team_id }, (err, profiles) => {
     if (err) throw err;
     callback(profiles);
   });
 }
 
-function fetchDocumentsByTeamName(team_domain, callback) {
+function fetchProfilesByTeamName(team_domain, callback) {
   Profile.find({ team_domain : team_domain }, (err, profiles) => {
     if (err) throw err;
     callback(profiles);
@@ -160,7 +179,7 @@ function getNormalizedSkill(current_skill) {
   var match_skill = current_skill;
   for (var skill in data_dictionary) {
     data_dictionary[skill].forEach(function (name_variant) {
-      if (current_skill.toLowerCase() === name_variant) {
+      if (current_skill.toLowerCase() === name_variant.toLowerCase()) {
         match_skill = skill;
       }
     });
