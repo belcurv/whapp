@@ -6,7 +6,7 @@
  * Copyright © 2017 Peter Martinson
  *
  *   Currently, this connects to DEV version of db
- *   Change `getDbConnectionString()` to modify this
+ *   Change `getDbConnectionString()` in ../db/index to modify this
 */
 
 const db              = require('../db/index'),
@@ -33,11 +33,11 @@ function logTitleSplash() {
 
 function displayAvailableCommands() {
   console.log('Type in the number of the procedure you wish to execute:');
-  console.log('1. Normalize skills in database against a new Data Dictionary');
-  console.log('2. Display contents of database');
-  console.log('3. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
-  console.log('4. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
-  console.log('5. Display all skills in database');
+  console.log('1. Display contents of database');
+  console.log('2. Display one user\'s profile.  ("3 <user_id>" or "3 <user_name>")');
+  console.log('3. Display all profiles for a team.  ("4 <team_id>" or "4 <team_domain>")');
+  console.log('4. Display all skills in database');
+  console.log('6. Normalize skills in database against a new Data Dictionary');
   console.log('\n      When you are finished, please type "quit"\n');
 }
 
@@ -57,23 +57,23 @@ process.stdin.on('data', function (text) {
 
   switch (command) {
     case '1':
-      normalizeSkillsAgainstDataDictionary();
-      break;
-    case '2':
       fetchAllProfiles(displayResults);
       break;
-    case '3':
+    case '2':
       console.log('\n');
       if ( fetchProfileByUserId(id, displayResults) ) ; // condition automatically console logs if true
       else fetchProfileByUserName(id, displayResults);
       break;
-    case '4':
+    case '3':
       console.log('\n');
       if ( fetchProfilesByTeamId(id, displayResults) ) ; // condition automatically console logs if true
       else fetchProfilesByTeamName(id, displayResults);
       break;
-    case '5':
+    case '4':
       fetchAllSkills(displayResults);
+      break;
+    case '6':
+      normalizeSkillsAgainstDataDictionary();
       break;
     default:
       console.log('That was not one of the options.\n');
@@ -84,15 +84,24 @@ process.stdin.on('data', function (text) {
 });
 
 /* ============================== FUNCTIONS ============================== */
+/**
+ * removes newline character from sdtin chunk
+*/
 function getCommand(text) {
   return text.substring(0,text.length-1);
 }
 
+/**
+ * closes the sdtin process
+*/
 function done() {
 	console.log('Goodbye');
 	process.exit();
 }
 
+/**
+ * gets the list of unique skills from the database
+*/
 function fetchAllSkills(callback) {
     Profile.find( (err, profiles) => {
         if (err) throw err;
@@ -111,6 +120,9 @@ function fetchAllSkills(callback) {
     });
 }
 
+/**
+ * updates all profiles in database with normalized skills
+*/
 function normalizeSkillsAgainstDataDictionary() {
   fetchAllProfiles( (profiles) => {
     let count_modified = 0;
@@ -151,10 +163,18 @@ function normalizeSkillsAgainstDataDictionary() {
   });
 }
 
+/**
+ * Updates a single profile's skills property
+*/
 function replaceUserSkills(_id, replacement_skills, callback) {
   Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
 }
 
+/**
+ * log reqults to the console
+ *
+ * @params {string} something to log to the console
+*/
 function displayResults(results) {
   if ( results !== null ) {
     console.log('\n' + results + '\n');
@@ -162,6 +182,9 @@ function displayResults(results) {
   }
 }
 
+/**
+ * get all profiles from database
+*/
 function fetchAllProfiles(callback) {
   Profile.find( (err, profiles) => {
     if (err) throw err;
@@ -169,6 +192,11 @@ function fetchAllProfiles(callback) {
   });
 }
 
+/**
+ * get a single profile
+ *
+ * @params {string} the profile.user_id
+*/
 function fetchProfileByUserId(user_id, callback) {
   Profile.findOne({ user_id : user_id }, (err, profile) => {
     if (err) throw err;
@@ -176,6 +204,11 @@ function fetchProfileByUserId(user_id, callback) {
   });
 }
 
+/**
+ * get a single profile
+ *
+ * @params {string} the profile.user_name
+*/
 function fetchProfileByUserName(user_name, callback) {
   Profile.findOne({ user_name : user_name }, (err, profile) => {
     if (err) throw err;
@@ -183,6 +216,11 @@ function fetchProfileByUserName(user_name, callback) {
   });
 }
 
+/**
+ * get all profiles of a given team
+ *
+ * @params {string} the profiles.team_id
+*/
 function fetchProfilesByTeamId(team_id, callback) {
   Profile.find({ team_id : team_id }, (err, profiles) => {
     if (err) throw err;
@@ -190,6 +228,11 @@ function fetchProfilesByTeamId(team_id, callback) {
   });
 }
 
+/**
+ * get all profiles of a given team
+ *
+ * @params {string} the profiles.team_name
+*/
 function fetchProfilesByTeamName(team_domain, callback) {
   Profile.find({ team_domain : team_domain }, (err, profiles) => {
     if (err) throw err;
@@ -197,6 +240,12 @@ function fetchProfilesByTeamName(team_domain, callback) {
   });
 }
 
+/**
+ * check a skill against the data dictionary
+ *
+ * @params {string} the skill to check against dictionary
+ * @returns {string} either the passed skill, or the data dictionary's skill
+*/
 function getNormalizedSkill(current_skill) {
   var match_skill = current_skill;
   for (var skill in data_dictionary) {
