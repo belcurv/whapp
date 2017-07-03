@@ -48,32 +48,35 @@ process.stdin.setEncoding('utf8');
 
 process.stdin.on('data', function (text) {
   let command = getCommand(text).substring(0,1);
+  let id = getCommand(text).substring(2);
 
 	if ( getCommand(text) === 'quit') {
 		done();
 	}
-  else if ( command == '1' ) {
-    normalizeSkillsAgainstDataDictionary();
+
+  switch (command) {
+    case '1':
+      normalizeSkillsAgainstDataDictionary();
+      break;
+    case '2':
+      fetchAllProfiles(displayDocuments);
+      break;
+    case '3':
+      console.log('\n');
+      if ( fetchDocumentByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
+      else fetchDocumentByUserName(id, displayDocuments);
+      break;
+    case '4':
+      console.log('\n');
+      if ( fetchDocumentsByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
+      else fetchDocumentsByTeamName(id, displayDocuments);
+      break;
+    default:
+      console.log('That was not one of the options.\n');
+      displayAvailableCommands();
+      break;
   }
-  else if ( command == '2' ) {
-    fetchAllProfiles(displayDocuments);
-  }
-  else if ( command == '3' ) {
-    let id = getCommand(text).substring(2);
-    console.log('\n');
-    if ( fetchDocumentByUserId(id, displayDocuments) ) ; // condition automatically console logs if true
-    else fetchDocumentByUserName(id, displayDocuments);
-  }
-  else if ( command == '4' ) {
-    let id = getCommand(text).substring(2);
-    console.log('\n');
-    if ( fetchDocumentsByTeamId(id, displayDocuments) ) ; // condition automatically console logs if true
-    else fetchDocumentsByTeamName(id, displayDocuments);
-  }
-  else {
-    console.log('That was not one of the options.\n');
-    displayAvailableCommands();
-  }
+
 });
 
 /* ============================== FUNCTIONS ============================== */
