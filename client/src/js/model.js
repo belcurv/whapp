@@ -6,6 +6,7 @@
 */
 
 import { getJSON } from './service';
+import { formatSkills } from './util';
 
 export default class Model {
     
@@ -15,13 +16,25 @@ export default class Model {
     
     /* fetch user profiles for a given team ID
     */
-    getProfiles() {
-        return getJSON('/api/team/T3BC1RPPH')
+    getProfiles(team) {
+        return getJSON(`/api/team/${team}`)
             .then( (profiles) => {
-                console.log('profiles from model.js', profiles);
+//                console.log('Profiles from model.js', profiles);
                 return profiles;
             });
     }
-
+    
+    
+    /* fetch team skills*/
+    getTeamSkills(team) {
+        return getJSON(`/api/team/${team}`)
+            .then( profiles => {
+                console.log(formatSkills(profiles));
+                return {
+                    team  : profiles[0].team_domain,
+                    skills: formatSkills(profiles)
+                };
+            });
+    }
     
 }

@@ -11,14 +11,13 @@ export default class Controller {
     
     render(data) {
         this.view.render(data);
-        
     }
     
     
     setView() {
-        console.log('controller setView fired');
-        this.model.getProfiles()
-            .then( data => this.render(data));
+//        console.log('controller setView fired');
+        this.model.getTeamSkills('T3BC1RPPH')
+            .then( data => this.render(data) );
     }
     
 }

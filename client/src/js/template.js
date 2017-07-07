@@ -2,14 +2,10 @@
 
 
 /* utility method for easy templating of repeating html elements
- * such as lists.
  *
- * 'tagged template literals' are strings that are first passed
- * through a custom function which returns the processed string.
- *
- * @params  [array]  literal     [array of all the literal secti
- * @params  [array]  ...cooked   [rest param: all the proccessed expressions]
- * @returns [string]             [the processed string]
+ * @params  [array]  literalsArr   [array of all the literal secti
+ * @params  [array]  ...cooked     [rest param: all the proccessed expressions]
+ * @returns [string]               [the processed string]
  */
 const html = (literalsArr, ...cooked) => {
     let result = '';
@@ -29,13 +25,10 @@ const html = (literalsArr, ...cooked) => {
 
 /* template that returns a 'tr'
 */
-const table_row = (profile) => html `
+const table_row = (skill) => html `
     <tr>
-        <td>${profile.team_domain}</td>
-        <td>${profile.user_name}</td>
-        <td>${(profile.timestamp).slice(3,15)}</td>
-        <td>${profile.skills.length}</td>
-        <td>${profile.skills.join(', ')}</td>
+        <td>${skill.skill}</td>
+        <td>${skill.count}</td>
     </tr>
 `;
 
@@ -43,20 +36,28 @@ const table_row = (profile) => html `
 /* template that loops over the array of profiles adding a 'tr' for each
 */
 const table_template = (data) => html `
-    <table class="table">
+    <table class="whapp-table">
         <thead>
-            <th>Team</th>
-            <th>Team Member</th>
-            <th>Last Updated</th>
-            <th>Total Skills</th>
-            <th>Skills</th>
+            <th>Skill</th>
+            <th>Count</th>
         </thead>
         <tbody>
-            ${data.map( profile => table_row(profile) )}
+            ${data.map( skill => table_row(skill) )}
         </tbody>
     </table>
 `;
 
-//console.log(table_template(temp_data));
 
-export { table_template };
+/* template that generates page header
+*/
+const header_template = (team) => html`
+    <header class="whapp-header">
+        <h1>${team}</h1>
+    </header>
+`;
+
+
+export {
+    table_template,
+    header_template
+};
