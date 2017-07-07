@@ -6,7 +6,7 @@
 */
 
 import { getJSON } from './service';
-import { makeFormattedSkillsArr, mapSkillCounts } from './util';
+import { formatSkills } from './util';
 
 export default class Model {
     
@@ -28,9 +28,12 @@ export default class Model {
     /* fetch team skills*/
     getTeamSkills(team) {
         return getJSON(`/api/team/${team}`)
-            .then( (profiles) => {
-                let skillsMap = mapSkillCounts(profiles);
-                return makeFormattedSkillsArr(skillsMap);
+            .then( profiles => {
+                console.log(formatSkills(profiles));
+                return {
+                    team  : profiles[0].team_domain,
+                    skills: formatSkills(profiles)
+                };
             });
     }
     

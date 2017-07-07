@@ -5,17 +5,21 @@
 */
 /* jshint esversion:6, browser: true */
 
-import { table_template } from './template';
+import { table_template }  from './template';
+import { header_template } from './template';
+import { piechart } from './piechart';
 
 export default class View {
     
     constructor() {
-        this.el = document.getElementById('target');
+        this.target = document.getElementById('target');
     }
     
     render(data) {
-        console.log('data from view', data);
-        this.el.innerHTML = table_template(data);
+        piechart(data.skills);
+        this.target.innerHTML = '';
+        this.target.innerHTML += header_template(data.team);
+        this.target.innerHTML += table_template(data.skills);
     }
     
 }

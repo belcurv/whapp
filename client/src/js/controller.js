@@ -11,12 +11,11 @@ export default class Controller {
     
     render(data) {
         this.view.render(data);
-        
     }
     
     
     setView() {
-        console.log('controller setView fired');
+//        console.log('controller setView fired');
         this.model.getTeamSkills('T3BC1RPPH')
             .then( data => this.render(data) );
     }
