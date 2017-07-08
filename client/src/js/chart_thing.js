@@ -1,7 +1,5 @@
 /* jshint esversion:6 */
 
-/* https://bl.ocks.org/mbostock/3887235 */
-
 import * as d3 from 'd3';
 
 const chart_thing = (data, targetEl, configMap) => {
