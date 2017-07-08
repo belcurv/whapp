@@ -1,6 +1,9 @@
 /* jshint esversion:6, devel:true */
 
 
+const rightNow = (new Date()).toString().slice(3, 15);
+
+
 /* utility method for easy templating of repeating html elements
  *
  * @params  [array]  literalsArr   [array of all the literal secti
@@ -50,14 +53,14 @@ const table_template = (data) => html `
 
 /* template that generates page header
 */
-const header_template = (team) => html`
+const title_template = (team) => html`
     <header class="whapp-header">
-        <h1>${team}</h1>
+        <h1>${team} skills as of ${rightNow}</h1>
     </header>
 `;
 
 
 export {
     table_template,
-    header_template
+    title_template
 };

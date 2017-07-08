@@ -1,20 +1,25 @@
 /* jshint esversion:6, browser: true */
 
-import { table_template }  from './template';
-import { header_template } from './template';
-import { chart_thing }     from './chart_thing';
+import { table_template } from './template';
+import { title_template } from './template';
+import { chart_thing }    from './chart_thing';
+import { pie_thing }      from './chart_thing';
 
 export default class View {
     
     constructor() {
-        this.target    = document.getElementById('target');
-        this.svgTarget = document.getElementById('svg');
+        this.title = document.getElementById('title');
+        this.chart = document.getElementById('chart');
+        this.table = document.getElementById('table');
     }
     
     render(data) {
         
-        // empty the chart container first ...
-        this.svgTarget.innerHTML = '';
+        // clear chart before rerender
+        this.chart.innerHTML = '';
+        
+        // render page title
+        this.title.innerHTML = title_template(data.team);
         
         /* chart_thing builds the D3 graphic
          *
@@ -22,12 +27,11 @@ export default class View {
          * @param   [object]  svgTarget   [target DOM element for D3]
          * @param   [object]  config      [config map]
         */
-        chart_thing(data.skills, this.svgTarget, {width: 800, height: 100});
+        //chart_thing(data.skills, this.svgTarget, {width: 800, height: 100});
+        pie_thing(data.skills, this.chart, {width: 700, height: 360});
         
         // empty the table before repopulating...
-        this.target.innerHTML = '';
-        this.target.innerHTML += header_template(data.team);
-        this.target.innerHTML += table_template(data.skills);
+        this.table.innerHTML = table_template(data.skills);
     }
     
 }
