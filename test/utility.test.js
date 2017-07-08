@@ -5,7 +5,7 @@ const mongoose = require('mongoose'),
       util   = require('../utilities/database_utilities'),
       Profile = require('../models/profile_model');
 
-require('sinon-mongoose');
+mongoose.Promise = global.Promise;
 
 
 describe('database_utilities', function() {
@@ -25,3 +25,15 @@ describe('database_utilities', function() {
   });
 });
 
+describe('Model Validations: ', function() {
+  describe('Profile', function() {
+    it('should be invalid if user_id is empty', function(done) {
+      let p = new Profile();
+
+      p.validate(function(err) {
+        expect(err.errors.user_id).to.exist;
+        done();
+      });
+    });
+  });
+});
