@@ -1,8 +1,11 @@
 const mongoose = require('mongoose'),
       sinon = require('sinon'),
-      expect = require('chai').expect,
+      chai = require('chai'),
+      expect = chai.expect,
       util   = require('../utilities/database_utilities'),
       Profile = require('../models/profile_model');
+
+require('sinon-mongoose');
 
 
 describe('database_utilities', function() {
@@ -20,26 +23,5 @@ describe('database_utilities', function() {
     expect(util.fetchAllSkills).to.exist;
     expect(util.fetchAllSkills).to.be.a('function');
   });
-  it('should do something awesome', function() {
-    var stub = sinon.stub(mongoose.Model, 'find');
-    var callback = sinon.spy();
-    var test_profile = {
-            'team_id'     : 'team_id',
-            'team_domain' : 'team_domain',
-            'channel_id'  : 'channel_id',
-            'channel_name': 'channel_name',
-            'user_id'     : 'user_id',
-            'user_name'   : 'user_name',
-            'postText'    : 'postText',
-            'timestamp'   : 'timestamp',
-            'skills'      : ['skill 1', 'skill 2']
-    };
-    // stub.returns(test_profile);
-    util.fetchAllSkills(callback);
-
-    expect(callback.called).to.be.true;
-
-
-
-  });
 });
+
