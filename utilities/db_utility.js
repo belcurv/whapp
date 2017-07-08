@@ -117,8 +117,10 @@ function fetchAllSkills(callback) {
         
         profiles.forEach((profile) => {
           profile["skills"].forEach(function(skill) {
-            if ( all_skills.indexOf(skill + '\n') < 0 ) {
-              all_skills.push(skill + '\n');
+            // if ( all_skills.indexOf(skill + '\n') < 0 ) {
+            //   all_skills.push(skill + '\n');
+            if ( all_skills.indexOf(skill) < 0 ) {
+              all_skills.push(skill);
             }
           });
         });
