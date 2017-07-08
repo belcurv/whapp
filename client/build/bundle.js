@@ -16872,7 +16872,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.chart_thing = undefined;
+exports.pie_thing = exports.chart_thing = undefined;
 
 var _d = require('d3');
 
@@ -16883,10 +16883,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var chart_thing = function chart_thing(data, targetEl, configMap) {
 
     // set defaults in case no config object received
-    var width = configMap.width || 800;
+    var width = configMap.width || 400;
     var height = configMap.height || 400;
 
-    d3.select(targetEl).append('svg').attr('width', width).attr('height', height).selectAll('p').data(data).enter().append('rect').attr('x', function (d, i) {
+    d3.select(targetEl).append('svg').attr('width', width).attr('height', height).selectAll('rect').data(data).enter().append('rect').attr('x', function (d, i) {
         return width / (data.length - 1) * i;
     }).attr('y', function (d) {
         return height - d.count;
@@ -16895,7 +16895,98 @@ var chart_thing = function chart_thing(data, targetEl, configMap) {
     }).style('fill', 'steelblue');
 }; /* jshint esversion:6 */
 
+var pie_thing = function pie_thing(data, targetEl, configMap) {
+
+    // setup
+    var width = configMap ? configMap.width : 700,
+        height = configMap ? configMap.height : 360,
+        radius = Math.min(width, height) / 2,
+        donutWidth = 80;
+
+    // legend setup
+    var legendRectSize = 18,
+        legendSpacing = 4;
+
+    // limit to top 10 skills only
+    var topSkills = data.filter(function (d, i) {
+        return i < 10;
+    });
+
+    // define color scale
+    var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+    // select target and add SVG and Group elements
+    var svg = d3.select(targetEl).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + width / 2 + ', ' + height / 2 + ')');
+
+    // arc() defines the radius
+    var arc = d3.arc().innerRadius(radius - donutWidth).outerRadius(radius);
+
+    // pie() determines the start and end angles of the segments
+    var pie = d3.pie().value(function (d) {
+        return d.count;
+    }).sort(null);
+
+    // build paths
+    var path = svg.selectAll('path').data(pie(topSkills)).enter().append('path').attr('d', arc).attr('fill', function (d, i) {
+        return color(d.data.skill);
+    });
+
+    // define legend title
+    svg.append('text').attr('transform', 'translate(' + (radius + legendRectSize) + ', -120)').style('font-size', 14).text('Top 10 Skills');
+
+    // define legend
+    var legend = svg.selectAll('.legend').data(color.domain()).enter().append('g').attr('class', 'legend').attr('transform', function (d, i) {
+        var height = legendRectSize + legendSpacing,
+            offset = height * color.domain().length / 2,
+
+        // horiz  = -2 * legendRectSize,
+        horiz = radius + legendRectSize,
+            vert = i * height - offset;
+        return 'translate( ' + horiz + ', ' + vert + ' )';
+    });
+
+    // add them
+    legend.append('rect').attr('width', legendRectSize).attr('height', legendRectSize).style('fill', color).style('stroke', color);
+
+    // add legend text
+    legend.append('text').attr('x', legendRectSize + legendSpacing).attr('y', legendRectSize - legendSpacing).text(function (d) {
+        return d;
+    });
+
+    // define tooltips
+    var tooltip = d3.select(targetEl).append('div').attr('class', 'tooltip');
+
+    tooltip.append('div').attr('class', 'label');
+
+    tooltip.append('div').attr('class', 'count');
+
+    tooltip.append('div').attr('class', 'percent');
+
+    // event handlers show/hide tooltip on path mouseover
+    path.on('mouseover', function (d) {
+        var total = d3.sum(topSkills.map(function (d) {
+            return d.count;
+        })),
+            percent = Math.round(1000 * d.data.count / total) / 10;
+        tooltip.select('.label').html(d.data.skill);
+        tooltip.select('.count').html('Total: ' + d.data.count);
+        tooltip.select('.percent').html(percent + ' %');
+        tooltip.style('display', 'block');
+    });
+
+    //    path.on('mousemove', (d) => {
+    //        tooltip
+    //            .style('top',  `${d3.event.layerY + 10}px`)
+    //            .style('left', `${d3.event.layerX + 10}px`);
+    //    });
+
+    path.on('mouseout', function (d) {
+        tooltip.style('display', 'none');
+    });
+};
+
 exports.chart_thing = chart_thing;
+exports.pie_thing = pie_thing;
 
 },{"d3":1}],3:[function(require,module,exports){
 "use strict";
@@ -17096,11 +17187,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _templateObject = _taggedTemplateLiteral(['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n'], ['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n']),
     _templateObject2 = _taggedTemplateLiteral(['\n    <table class="whapp-table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n'], ['\n    <table class="whapp-table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n']),
-    _templateObject3 = _taggedTemplateLiteral(['\n    <header class="whapp-header">\n        <h1>', '</h1>\n    </header>\n'], ['\n    <header class="whapp-header">\n        <h1>', '</h1>\n    </header>\n']);
+    _templateObject3 = _taggedTemplateLiteral(['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n'], ['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 /* jshint esversion:6, devel:true */
+
+var rightNow = new Date().toString().slice(3, 15);
 
 /* utility method for easy templating of repeating html elements
  *
@@ -17143,12 +17236,12 @@ var table_template = function table_template(data) {
 
 /* template that generates page header
 */
-var header_template = function header_template(team) {
-    return html(_templateObject3, team);
+var title_template = function title_template(team) {
+    return html(_templateObject3, team, rightNow);
 };
 
 exports.table_template = table_template;
-exports.header_template = header_template;
+exports.title_template = title_template;
 
 },{}],8:[function(require,module,exports){
 "use strict";
@@ -17236,16 +17329,20 @@ var View = function () {
     function View() {
         _classCallCheck(this, View);
 
-        this.target = document.getElementById('target');
-        this.svgTarget = document.getElementById('svg');
+        this.title = document.getElementById('title');
+        this.chart = document.getElementById('chart');
+        this.table = document.getElementById('table');
     }
 
     _createClass(View, [{
         key: 'render',
         value: function render(data) {
 
-            // empty the chart container first ...
-            this.svgTarget.innerHTML = '';
+            // clear chart before rerender
+            this.chart.innerHTML = '';
+
+            // render page title
+            this.title.innerHTML = (0, _template.title_template)(data.team);
 
             /* chart_thing builds the D3 graphic
              *
@@ -17253,12 +17350,11 @@ var View = function () {
              * @param   [object]  svgTarget   [target DOM element for D3]
              * @param   [object]  config      [config map]
             */
-            (0, _chart_thing.chart_thing)(data.skills, this.svgTarget, { width: 800, height: 100 });
+            //chart_thing(data.skills, this.svgTarget, {width: 800, height: 100});
+            (0, _chart_thing.pie_thing)(data.skills, this.chart, { width: 700, height: 360 });
 
             // empty the table before repopulating...
-            this.target.innerHTML = '';
-            this.target.innerHTML += (0, _template.header_template)(data.team);
-            this.target.innerHTML += (0, _template.table_template)(data.skills);
+            this.table.innerHTML = (0, _template.table_template)(data.skills);
         }
     }]);
 
