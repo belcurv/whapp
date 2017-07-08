@@ -16872,12 +16872,44 @@ Object.defineProperty(exports, '__esModule', { value: true });
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.chart_thing = undefined;
+
+var _d = require('d3');
+
+var d3 = _interopRequireWildcard(_d);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var chart_thing = function chart_thing(data, targetEl, configMap) {
+
+    // set defaults in case no config object received
+    var width = configMap.width || 800;
+    var height = configMap.height || 400;
+
+    d3.select(targetEl).append('svg').attr('width', width).attr('height', height).selectAll('p').data(data).enter().append('rect').attr('x', function (d, i) {
+        return width / (data.length - 1) * i;
+    }).attr('y', function (d) {
+        return height - d.count;
+    }).attr('width', width / data.length).attr('height', function (d) {
+        return d.count;
+    }).style('fill', 'steelblue');
+}; /* jshint esversion:6 */
+
+/* https://bl.ocks.org/mbostock/3887235 */
+
+exports.chart_thing = chart_thing;
+
+},{"d3":1}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/* controller.js -- connects our model and view */
 /* jshint esversion:6, devel:true */
 
 var Controller = function () {
@@ -16889,19 +16921,29 @@ var Controller = function () {
     }
 
     _createClass(Controller, [{
-        key: 'render',
+        key: "render",
         value: function render(data) {
             this.view.render(data);
         }
+
+        // checks that the hash is valid, and triggers getJSON AJAX
+        // and then renders using the AJAX response
+
     }, {
-        key: 'setView',
-        value: function setView() {
+        key: "setView",
+        value: function setView(hash) {
             var _this = this;
 
-            //        console.log('controller setView fired');
-            this.model.getTeamSkills('T3BC1RPPH').then(function (data) {
-                return _this.render(data);
-            });
+            var validHash = /^#\/T[0-9A-Z]{8}$/.test(hash);
+
+            if (validHash) {
+
+                var team_ID = hash.match(/^#\/(T[0-9A-Z]{8})$/)[1];
+
+                this.model.getTeamSkills(team_ID).then(function (data) {
+                    return _this.render(data);
+                });
+            }
         }
     }]);
 
@@ -16910,7 +16952,7 @@ var Controller = function () {
 
 exports.default = Controller;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var _model = require('./model');
@@ -16942,13 +16984,16 @@ var App = function App() {
 
 var app = new App();
 
+// event handler. Calls controller's 'setView' method with URI hash
 var setView = function setView() {
-    app.controller.setView();
+    app.controller.setView(document.location.hash);
 };
 
+// register event listeners
 (0, _util.$on)(window, 'load', setView);
+(0, _util.$on)(window, 'hashchange', setView);
 
-},{"./controller":2,"./model":4,"./util":8,"./view":9}],4:[function(require,module,exports){
+},{"./controller":3,"./model":5,"./util":8,"./view":9}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -16973,26 +17018,17 @@ var Model = function () {
         _classCallCheck(this, Model);
     }
 
-    /* fetch user profiles for a given team ID
+    /* fetch team skills
+     *
+     * @param    [string]   team   [Slack team ID]
+     * @returns  [object]          [team name & skills map]
     */
 
 
     _createClass(Model, [{
-        key: 'getProfiles',
-        value: function getProfiles(team) {
-            return (0, _service.getJSON)('/api/team/' + team).then(function (profiles) {
-                //                console.log('Profiles from model.js', profiles);
-                return profiles;
-            });
-        }
-
-        /* fetch team skills*/
-
-    }, {
         key: 'getTeamSkills',
         value: function getTeamSkills(team) {
             return (0, _service.getJSON)('/api/team/' + team).then(function (profiles) {
-                console.log((0, _util.formatSkills)(profiles));
                 return {
                     team: profiles[0].team_domain,
                     skills: (0, _util.formatSkills)(profiles)
@@ -17006,37 +17042,7 @@ var Model = function () {
 
 exports.default = Model;
 
-},{"./service":6,"./util":8}],5:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.piechart = undefined;
-
-var _d = require('d3');
-
-var d3 = _interopRequireWildcard(_d);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var svg = d3.select('svg'),
-    width = +svg.attr('width'),
-    height = +svg.attr('height'),
-    radius = Math.min(width, height) / 2,
-    g = svg.append('g').attr('transform', 'translate(' + width / 2 + ', ' + height / 2 + ')'); /* jshint esversion:6 */
-
-/* https://bl.ocks.org/mbostock/3887235 */
-
-var color = d3.scaleOrdinal(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-var piechart = function piechart(data) {
-    return JSON.stringify(data, null, 2);
-};
-
-exports.piechart = piechart;
-
-},{"d3":1}],6:[function(require,module,exports){
+},{"./service":6,"./util":8}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -17220,16 +17226,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* view.js
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        handles rendering and DOM events.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        uses the template strings, feeds them data, and adds their output
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        to the right DOM elements.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
-/* jshint esversion:6, browser: true */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* jshint esversion:6, browser: true */
 
 var _template = require('./template');
 
-var _piechart = require('./piechart');
+var _chart_thing = require('./chart_thing');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17238,12 +17239,25 @@ var View = function () {
         _classCallCheck(this, View);
 
         this.target = document.getElementById('target');
+        this.svgTarget = document.getElementById('svg');
     }
 
     _createClass(View, [{
         key: 'render',
         value: function render(data) {
-            (0, _piechart.piechart)(data.skills);
+
+            // empty the chart container first ...
+            this.svgTarget.innerHTML = '';
+
+            /* chart_thing builds the D3 graphic
+             *
+             * @param   [array]   skills      [the skill:count map array]
+             * @param   [object]  svgTarget   [target DOM element for D3]
+             * @param   [object]  config      [config map]
+            */
+            (0, _chart_thing.chart_thing)(data.skills, this.svgTarget, { width: 800, height: 100 });
+
+            // empty the table before repopulating...
             this.target.innerHTML = '';
             this.target.innerHTML += (0, _template.header_template)(data.team);
             this.target.innerHTML += (0, _template.table_template)(data.skills);
@@ -17255,6 +17269,6 @@ var View = function () {
 
 exports.default = View;
 
-},{"./piechart":5,"./template":7}]},{},[3])
+},{"./chart_thing":2,"./template":7}]},{},[4])
 
 //# sourceMappingURL=bundle.js.map
