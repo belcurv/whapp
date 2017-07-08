@@ -5,7 +5,7 @@
    T5518TKBR = extemporaneous
 */
 
-import { getJSON } from './service';
+import { getJSON }      from './service';
 import { formatSkills } from './util';
 
 export default class Model {
@@ -14,25 +14,18 @@ export default class Model {
         
     }
     
-    /* fetch user profiles for a given team ID
+    
+    /* fetch team skills
+     *
+     * @param    [string]   team   [Slack team ID]
+     * @returns  [object]          [team name & skills map]
     */
-    getProfiles(team) {
-        return getJSON(`/api/team/${team}`)
-            .then( (profiles) => {
-//                console.log('Profiles from model.js', profiles);
-                return profiles;
-            });
-    }
-    
-    
-    /* fetch team skills*/
     getTeamSkills(team) {
         return getJSON(`/api/team/${team}`)
             .then( profiles => {
-                console.log(formatSkills(profiles));
                 return {
-                    team  : profiles[0].team_domain,
-                    skills: formatSkills(profiles)
+                    team   : profiles[0].team_domain,
+                    skills : formatSkills(profiles)
                 };
             });
     }
