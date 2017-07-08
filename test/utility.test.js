@@ -34,7 +34,7 @@ describe('database_utilities', function() {
             'timestamp'   : 'timestamp',
             'skills'      : ['skill 1', 'skill 2']
     };
-    stub.returns(test_profile);
+    // stub.returns(test_profile);
     util.fetchAllSkills(callback);
 
     expect(callback.called).to.be.true;
