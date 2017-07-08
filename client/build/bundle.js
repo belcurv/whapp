@@ -16895,8 +16895,6 @@ var chart_thing = function chart_thing(data, targetEl, configMap) {
     }).style('fill', 'steelblue');
 }; /* jshint esversion:6 */
 
-/* https://bl.ocks.org/mbostock/3887235 */
-
 exports.chart_thing = chart_thing;
 
 },{"d3":1}],3:[function(require,module,exports){
