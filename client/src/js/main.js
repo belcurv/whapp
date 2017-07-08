@@ -18,8 +18,12 @@ class App {
 
 const app = new App();
 
+// event handler. Calls controller's 'setView' method with URI hash
 const setView = () => {
-    app.controller.setView();
+    app.controller.setView(document.location.hash);
 };
 
+
+// register event listeners
 $on(window, 'load', setView);
+$on(window, 'hashchange', setView);
