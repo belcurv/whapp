@@ -1,7 +1,7 @@
 /* jshint esversion:6, node: true */
 
 /*
- * Whapp Whobot Data Viewer API © 2017 - Jay Schwane & Peter Martinson
+ * Whapp Whobot Data Viewer API (c) 2017 - Jay Schwane & Peter Martinson
 */
 
 /* ================================= SETUP ================================= */
@@ -10,13 +10,13 @@ const express       = require('express'),
       app           = express(),
       morgan        = require('morgan'),
       bodyParser    = require('body-parser'),
-      
+
       db            = require('./db'),
       mongoose      = require('mongoose'),
-      
+
       apiRoutes     = require('./routes/api_routes'),
       publicRoutes  = require('./routes/public_routes'),
-      
+
       port          = process.env.PORT || 3000;
 
 
