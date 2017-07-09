@@ -1,16 +1,17 @@
 /* jshint esversion:6, browser: true */
 
-import { table_template } from './template';
-import { title_template } from './template';
-import { chart_thing }    from './chart_thing';
-import { pie_thing }      from './chart_thing';
+import { table_template }  from './template';
+import { title_template }  from './template';
+import { footer_template } from './template';
+import { pie_thing }       from './chart_thing';
 
 export default class View {
     
     constructor() {
-        this.title = document.getElementById('title');
-        this.chart = document.getElementById('chart');
-        this.table = document.getElementById('table');
+        this.title  = document.getElementById('title');
+        this.chart  = document.getElementById('chart');
+        this.table  = document.getElementById('table');
+        this.footer = document.getElementById('footer');
     }
     
     render(data) {
@@ -30,8 +31,15 @@ export default class View {
         //chart_thing(data.skills, this.svgTarget, {width: 800, height: 100});
         pie_thing(data.skills, this.chart, {width: 700, height: 360});
         
-        // empty the table before repopulating...
         this.table.innerHTML = table_template(data.skills);
+        
+        this.footer.innerHTML = footer_template({
+            desc    : 'whapp',
+            version : '1.0.0',
+            link    : 'https://github.com/belcurv/whobot'
+        });
+        
+        
     }
     
 }
