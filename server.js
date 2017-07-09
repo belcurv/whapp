@@ -1,7 +1,7 @@
 /* jshint esversion:6, node: true */
 
 /*
- * Whapp Whobot Data Viewer API Â© 2017 - Jay Schwane
+ * Whapp Whobot Data Viewer API © 2017 - Jay Schwane & Peter Martinson
 */
 
 /* ================================= SETUP ================================= */
