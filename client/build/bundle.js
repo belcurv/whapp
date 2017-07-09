@@ -16880,6 +16880,7 @@ var d3 = _interopRequireWildcard(_d);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+// bar chart
 var chart_thing = function chart_thing(data, targetEl, configMap) {
 
     // set defaults in case no config object received
@@ -16893,7 +16894,10 @@ var chart_thing = function chart_thing(data, targetEl, configMap) {
     }).attr('width', width / data.length).attr('height', function (d) {
         return d.count;
     }).style('fill', 'steelblue');
-}; /* jshint esversion:6 */
+};
+
+// donut chart
+/* jshint esversion:6 */
 
 var pie_thing = function pie_thing(data, targetEl, configMap) {
 
@@ -16916,7 +16920,7 @@ var pie_thing = function pie_thing(data, targetEl, configMap) {
     var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
     // select target and add SVG and Group elements
-    var svg = d3.select(targetEl).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + width / 2 + ', ' + height / 2 + ')');
+    var svg = d3.select(targetEl).append('svg').attr('viewBox', '0 0 ' + width + ' ' + height).attr('preserveAspectRatio', 'xMinYMin meet').append('g').attr('transform', 'translate(' + width / 2 + ', ' + height / 2 + ')');
 
     // arc() defines the radius
     var arc = d3.arc().innerRadius(radius - donutWidth).outerRadius(radius);
@@ -16973,12 +16977,6 @@ var pie_thing = function pie_thing(data, targetEl, configMap) {
         tooltip.select('.percent').html(percent + ' %');
         tooltip.style('display', 'block');
     });
-
-    //    path.on('mousemove', (d) => {
-    //        tooltip
-    //            .style('top',  `${d3.event.layerY + 10}px`)
-    //            .style('left', `${d3.event.layerX + 10}px`);
-    //    });
 
     path.on('mouseout', function (d) {
         tooltip.style('display', 'none');
@@ -17094,6 +17092,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
    T3BC1RPPH = chingu central
    T4ZS2DFAA = chingu rhinos
    T5518TKBR = extemporaneous
+   T43U70EMR = hardlyknewhim
+   T4Y16R6Q4 = whobot-test
 */
 
 var _service = require('./service');
@@ -17187,7 +17187,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _templateObject = _taggedTemplateLiteral(['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n'], ['\n    <tr>\n        <td>', '</td>\n        <td>', '</td>\n    </tr>\n']),
     _templateObject2 = _taggedTemplateLiteral(['\n    <table class="whapp-table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n'], ['\n    <table class="whapp-table">\n        <thead>\n            <th>Skill</th>\n            <th>Count</th>\n        </thead>\n        <tbody>\n            ', '\n        </tbody>\n    </table>\n']),
-    _templateObject3 = _taggedTemplateLiteral(['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n'], ['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n']);
+    _templateObject3 = _taggedTemplateLiteral(['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n'], ['\n    <header class="whapp-header">\n        <h1>', ' skills as of ', '</h1>\n    </header>\n']),
+    _templateObject4 = _taggedTemplateLiteral(['\n    <p class="footer-credit"> ', ' : v', ' : by \n        <a href="', '" target="_blank">belcurv</a>\n        <a href="', '" target="_blank">\n            <svg width="20" height="20" class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true">\n                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"> </path>\n            </svg>\n        </a>\n    </p>\n    <p class="footer-credit">Source released under the MIT license. Website and documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a></p>\n'], ['\n    <p class="footer-credit"> ', ' : v', ' : by \n        <a href="', '" target="_blank">belcurv</a>\n        <a href="', '" target="_blank">\n            <svg width="20" height="20" class="github-icon" viewBox="0 0 16 16" version="1.1" aria-hidden="true">\n                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"> </path>\n            </svg>\n        </a>\n    </p>\n    <p class="footer-credit">Source released under the MIT license. Website and documentation licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a></p>\n']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -17240,8 +17241,15 @@ var title_template = function title_template(team) {
     return html(_templateObject3, team, rightNow);
 };
 
+/* template that generates the footer
+*/
+var footer_template = function footer_template(config) {
+    return html(_templateObject4, config.desc, config.version, config.link, config.link);
+};
+
 exports.table_template = table_template;
 exports.title_template = title_template;
+exports.footer_template = footer_template;
 
 },{}],8:[function(require,module,exports){
 "use strict";
@@ -17332,6 +17340,7 @@ var View = function () {
         this.title = document.getElementById('title');
         this.chart = document.getElementById('chart');
         this.table = document.getElementById('table');
+        this.footer = document.getElementById('footer');
     }
 
     _createClass(View, [{
@@ -17353,8 +17362,13 @@ var View = function () {
             //chart_thing(data.skills, this.svgTarget, {width: 800, height: 100});
             (0, _chart_thing.pie_thing)(data.skills, this.chart, { width: 700, height: 360 });
 
-            // empty the table before repopulating...
             this.table.innerHTML = (0, _template.table_template)(data.skills);
+
+            this.footer.innerHTML = (0, _template.footer_template)({
+                desc: 'whapp',
+                version: '1.0.0',
+                link: 'https://github.com/belcurv/whobot'
+            });
         }
     }]);
 
