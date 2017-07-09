@@ -3,6 +3,8 @@
    T3BC1RPPH = chingu central
    T4ZS2DFAA = chingu rhinos
    T5518TKBR = extemporaneous
+   T43U70EMR = hardlyknewhim
+   T4Y16R6Q4 = whobot-test
 */
 
 import { getJSON }      from './service';
