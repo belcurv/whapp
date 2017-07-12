@@ -16,10 +16,6 @@ describe('database_utilities',  () => {
   it('should be an object',  () => {
     expect(util).to.be.an('object');
   });
-  it('should contain a test function',  () => {
-    expect(util.testFunction).to.exist;
-    expect(util.testFunction).to.be.a('function');
-  });
   it('should contain fetchAllSkills()',  () => {
     expect(util.fetchAllSkills).to.exist;
     expect(util.fetchAllSkills).to.be.a('function');
@@ -100,6 +96,13 @@ describe('Database Functions: ',  () => {
     Profile.find.yields(null, expectedModels);
     util.fetchProfilesByTeamId(team_name, callback);
     sinon.assert.calledWith(callback, expectedModels);
+  });
+
+  it('getNormalizedSkill should return a skill from data dictionary', () => {
+    expect(util.getNormalizedSkill('js')).to.equal('JavaScript');
+    expect(util.getNormalizedSkill('math')).to.equal('Math');
+    expect(util.getNormalizedSkill('react')).to.equal('ReactJS');
+    expect(util.getNormalizedSkill('blurg')).to.equal('blurg');
   });
 
   // it('normalizeSkillsAgainstDataDictionary should change a skill',  () => {

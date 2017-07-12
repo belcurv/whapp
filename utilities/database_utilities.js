@@ -3,8 +3,45 @@ const Profile         = require('../models/profile_model'),
 
 module.exports = {
 
-  testFunction : function() {
-    return 1;
+  normalizeSkillsAgainstDataDictionary : function() {
+
+    fetchAllProfiles( (profiles) => {
+      let count_modified = 0;
+      for (let profile in profiles) {
+        let old_skills = profiles[profile].skills,
+            new_skills = [],
+            _id = profiles[profile]._id,
+            user_name = profiles[profile].user_name,
+            changed = 0;
+
+        // populate new_skills array with normalized skills
+        old_skills.forEach( (skill) => {
+          if ( skill == getNormalizedSkill(skill) ) {
+            new_skills.push(skill);
+          } else {
+            new_skills.push(getNormalizedSkill(skill));
+            changed = 1;
+          }
+        });
+
+        // update the profile
+        replaceUserSkills(_id, new_skills, (err, log) => {
+          if (err) throw err;
+        });
+
+        if ( changed ) {
+          count_modified++;
+        }
+
+      } // for
+
+      if ( count_modified ) {
+        console.log(`${count_modified} profiles have been updated.\n`);
+      } else {
+        console.log('no profiles updated\n');
+      }
+      displayAvailableCommands();
+    });
   },
 
   fetchAllProfiles : function(callback) {
@@ -61,67 +98,23 @@ module.exports = {
     });
   },
 
-  normalizeSkillsAgainstDataDictionary : function() {
+  replaceUserSkills : function(_id, replacement_skills, callback) {
+    Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
+  },
 
-    fetchAllProfiles( (profiles) => {
-      let count_modified = 0;
-      for (let profile in profiles) {
-        let old_skills = profiles[profile].skills,
-            new_skills = [],
-            _id = profiles[profile]._id,
-            user_name = profiles[profile].user_name,
-            changed = 0;
-
-        // populate new_skills array with normalized skills
-        old_skills.forEach( (skill) => {
-          if ( skill == getNormalizedSkill(skill) ) {
-            new_skills.push(skill);
-          } else {
-            new_skills.push(getNormalizedSkill(skill));
-            changed = 1;
-          }
-        });
-
-        // update the profile
-        replaceUserSkills(_id, new_skills, (err, log) => {
-          if (err) throw err;
-        });
-
-        if ( changed ) {
-          count_modified++;
+  getNormalizedSkill : function(current_skill) {
+    var match_skill = current_skill;
+    for (let skill in data_dictionary) {
+      data_dictionary[skill].forEach( (name_variant) => {
+        if (current_skill.toLowerCase() === name_variant.toLowerCase()) {
+          match_skill = skill;
         }
-
-      } // for
-
-      if ( count_modified ) {
-        console.log(`${count_modified} profiles have been updated.\n`);
-      } else {
-        console.log('no profiles updated\n');
-      }
-      displayAvailableCommands();
-    });
+      });
+    }
+    return match_skill;
   }
+
 }
-
-function replaceUserSkills(_id, replacement_skills, callback) {
-  Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
-}
-
-function getNormalizedSkill(current_skill) {
-  var match_skill = current_skill;
-  for (let skill in data_dictionary) {
-    data_dictionary[skill].forEach( (name_variant) => {
-      if (current_skill.toLowerCase() === name_variant.toLowerCase()) {
-        match_skill = skill;
-      }
-    });
-  }
-  return match_skill;
-};
-
-
-
-
 
 
 
