@@ -1,36 +1,36 @@
 /* jshint esversion:6, node:true */
 const mongoose = require('mongoose'),
-      sinon = require('sinon'),
-      chai = require('chai'),
-      expect = chai.expect,
-      util   = require('../utilities/database_utilities'),
-      Profile = require('../models/profile_model');
+      sinon    = require('sinon'),
+      chai     = require('chai'),
+      expect   = chai.expect,
+      util     = require('../utilities/database_utilities'),
+      Profile  = require('../models/profile_model');
 
 mongoose.Promise = global.Promise;
 
 
-describe('database_utilities', function() {
-  it('should exist', function() {
+describe('database_utilities',  () => {
+  it('should exist',  () => {
     expect(util).to.exist;
   });
-  it('should be an object', function() {
+  it('should be an object',  () => {
     expect(util).to.be.an('object');
   });
-  it('should contain a test function', function() {
+  it('should contain a test function',  () => {
     expect(util.testFunction).to.exist;
     expect(util.testFunction).to.be.a('function');
   });
-  it('should contain fetchAllSkills()', function() {
+  it('should contain fetchAllSkills()',  () => {
     expect(util.fetchAllSkills).to.exist;
     expect(util.fetchAllSkills).to.be.a('function');
   });
 });
 
-describe('Model Validations: ', function() {
-  describe('Profile', function() {
-    it('should be invalid if user_id is empty', function(done) {
+describe('Model Validations: ',  () => {
+  describe('Profile',  () => {
+    it('should be invalid if user_id is empty', (done) => {
       let profile = new Profile();
-      profile.validate(function(err) {
+      profile.validate( (err) => {
         expect(err.errors.user_id).to.exist;
         done();
       });
@@ -38,71 +38,73 @@ describe('Model Validations: ', function() {
   });
 });
 
-describe('Database Functions: ', function() {
-  beforeEach(function() {
+describe('Database Functions: ',  () => {
+  beforeEach( () => {
     sinon.stub(Profile, 'find');
     sinon.stub(Profile, 'findOne');
+    sinon.stub(Profile, 'update');
   });
 
-  afterEach(function() {
+  afterEach( () => {
     Profile.find.restore();
     Profile.findOne.restore();
+    Profile.update.restore();
   });
 
-  it('fetchAllProfiles should fetch all the profiles', function() {
-    var expectedModels = sample_profiles;
-    var callback = sinon.stub();
+  it('fetchAllProfiles should fetch all the profiles',  () => {
+    let expectedModels = sample_profiles;
+    let callback = sinon.stub();
     Profile.find.yields(null, expectedModels);
     util.fetchAllProfiles(callback);
     sinon.assert.calledWith(callback, expectedModels);
   });
 
-  it('fetchAllSkills should fetch a sorted, deduped array of all the skills', function() {
-    var expectedModels = sample_profiles;
-    var expectedResults = getAllSkills();
+  it('fetchAllSkills should fetch a sorted, deduped array of all the skills',  () => {
+    let expectedModels = sample_profiles;
+    let expectedResults = getAllSkills();
     Profile.find.yields(null, expectedModels);
-    var callback = sinon.stub();
+    let callback = sinon.stub();
     util.fetchAllSkills(callback);
     sinon.assert.calledWith(callback, expectedResults);
   });
 
-  it('fetchProfileByUserId should fetch one profile', function() {
-    var expectedModel = sample_profiles[0];
-    var callback = sinon.stub();
+  it('fetchProfileByUserId should fetch one profile',  () => {
+    let expectedModel = sample_profiles[0];
+    let callback = sinon.stub();
     Profile.findOne.yields(null, expectedModel);
     util.fetchProfileByUserId(sample_profiles[0].user_id, callback);
     sinon.assert.calledWith(callback, expectedModel);
   });
 
-  it('fetchProfileByUserName should fetch one profile', function() {
-    var expectedModel = sample_profiles[0];
-    var callback = sinon.stub();
+  it('fetchProfileByUserName should fetch one profile',  () => {
+    let expectedModel = sample_profiles[0];
+    let callback = sinon.stub();
     Profile.findOne.yields(null, expectedModel);
     util.fetchProfileByUserName(sample_profiles[0].user_name, callback);
     sinon.assert.calledWith(callback, expectedModel);
   });
 
-  it('fetchProfilesByTeamId should fetch several profiles', function() {
-    var expectedModels = sample_profiles;
-    var team_id = 'T3BC1RPPH';
-    var callback = sinon.stub();
+  it('fetchProfilesByTeamId should fetch several profiles',  () => {
+    let expectedModels = sample_profiles;
+    let team_id = 'T3BC1RPPH';
+    let callback = sinon.stub();
     Profile.find.yields(null, expectedModels);
     util.fetchProfilesByTeamId(team_id, callback);
     sinon.assert.calledWith(callback, expectedModels);
   });
 
-  it('fetchProfilesByTeamName should fetch several profiles', function() {
-    var expectedModels = sample_profiles;
-    var team_name = 'chingucentral';
-    var callback = sinon.stub();
+  it('fetchProfilesByTeamName should fetch several profiles',  () => {
+    let expectedModels = sample_profiles;
+    let team_name = 'chingucentral';
+    let callback = sinon.stub();
     Profile.find.yields(null, expectedModels);
     util.fetchProfilesByTeamId(team_name, callback);
     sinon.assert.calledWith(callback, expectedModels);
   });
 
-  // it('normalizeSkillsAgainstDataDictionary should change a skill', function() {
-  //   var expectedModels = sample_profiles;
-  //   var expectedResults = normalized_profiles;
+  // it('normalizeSkillsAgainstDataDictionary should change a skill',  () => {
+  //   let expectedModels = sample_profiles;
+  //   let expectedResults = normalized_profiles;
   //   sinon.stub(util, 'fetchAllProfiles');
   //   util.fetchAllProfiles.restore();
   // });
@@ -112,7 +114,7 @@ describe('Database Functions: ', function() {
 
 /*__________________________ Standards __________________________*/
 
-var sample_profiles = [ {
+let sample_profiles = [ {
 	team_id: 'T3BC1RPPH',
 	team_domain: 'chingucentral',
 	channel_id: 'D5Z65BS3E',
@@ -137,12 +139,12 @@ var sample_profiles = [ {
 	skills: [ 'PHP', 'JavaScript', 'ReactJS', 'CSS', 'HTML' ]
 } ];
 
-var all_skills = ["backend", "CSS", "Fitness", "HTML", "Java", "JavaScript", "Node.js", "PHP", "ReactJS", "Riding"]
+let all_skills = ["backend", "CSS", "Fitness", "HTML", "Java", "JavaScript", "Node.js", "PHP", "ReactJS", "Riding"]
 
-var getAllSkills = function() {
+let getAllSkills = function() {
   let all_skills = [];
   sample_profiles.forEach((profile) => {
-    profile["skills"].forEach(function(skill) {
+    profile["skills"].forEach( (skill) => {
       if ( all_skills.indexOf(skill) < 0 ) {
         all_skills.push(skill);
       }

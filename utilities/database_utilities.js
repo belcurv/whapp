@@ -1,13 +1,10 @@
-var util = {};
 const Profile = require('../models/profile_model');
+let util = {};
 
 util.testFunction = function() {
   return 1;
 }
 
-/**
- * get all profiles from database
-*/
 util.fetchAllProfiles = function(callback) {
   Profile.find( (err, profiles) => {
     if (err) throw err;
@@ -15,9 +12,6 @@ util.fetchAllProfiles = function(callback) {
   });
 }
 
-/**
- * gets the list of unique skills from the database
-*/
 util.fetchAllSkills = function(callback) {
   Profile.find( (err, profiles) => {
     if (err) throw err;
@@ -25,9 +19,6 @@ util.fetchAllSkills = function(callback) {
   });
 }
 
-/**
- * Makes a sorted array of unique skills from an array of profiles
-*/
 util.makeSortedArray = function(profiles) {
   let all_skills = [];
   profiles.forEach( (profile) => {
@@ -40,11 +31,6 @@ util.makeSortedArray = function(profiles) {
   return all_skills.sort();
 }
 
-/**
- * get a single profile
- *
- * @params {string} the profile.user_id
-*/
 util.fetchProfileByUserId = function(user_id, callback) {
   Profile.findOne({ user_id : user_id }, (err, profile) => {
     if (err) throw err;
@@ -52,11 +38,6 @@ util.fetchProfileByUserId = function(user_id, callback) {
   });
 }
 
-/**
- * get a single profile
- *
- * @params {string} the profile.user_name
-*/
 util.fetchProfileByUserName = function(user_name, callback) {
   Profile.findOne({ user_name : user_name }, (err, profile) => {
     if (err) throw err;
@@ -64,11 +45,6 @@ util.fetchProfileByUserName = function(user_name, callback) {
   });
 }
 
-/**
- * get all profiles of a given team
- *
- * @params {string} the profiles.team_id
-*/
 util.fetchProfilesByTeamId = function(team_id, callback) {
   Profile.find({ team_id : team_id }, (err, profiles) => {
     if (err) throw err;
@@ -76,11 +52,6 @@ util.fetchProfilesByTeamId = function(team_id, callback) {
   });
 }
 
-/**
- * get all profiles of a given team
- *
- * @params {string} the profiles.team_name
-*/
 util.fetchProfilesByTeamName = function(team_domain, callback) {
   Profile.find({ team_domain : team_domain }, (err, profiles) => {
     if (err) throw err;
@@ -88,10 +59,8 @@ util.fetchProfilesByTeamName = function(team_domain, callback) {
   });
 }
 
-/**
- * updates all profiles in database with normalized skills
-*/
 util.normalizeSkillsAgainstDataDictionary = function() {
+
   fetchAllProfiles( (profiles) => {
     let count_modified = 0;
     for (let profile in profiles) {
@@ -131,6 +100,30 @@ util.normalizeSkillsAgainstDataDictionary = function() {
   });
 }
 
+/**
+ * Updates a single profile's skills property
+*/
+function replaceUserSkills(_id, replacement_skills, callback) {
+  Profile.update({ _id : _id }, { $set: {skills : replacement_skills} }, callback);
+}
+
+/**
+ * check a skill against the data dictionary
+ *
+ * @params {string} the skill to check against dictionary
+ * @returns {string} either the passed skill, or the data dictionary's skill
+*/
+function getNormalizedSkill(current_skill) {
+  var match_skill = current_skill;
+  for (let skill in data_dictionary) {
+    data_dictionary[skill].forEach( (name_variant) => {
+      if (current_skill.toLowerCase() === name_variant.toLowerCase()) {
+        match_skill = skill;
+      }
+    });
+  }
+  return match_skill;
+};
 module.exports = util;
 
 

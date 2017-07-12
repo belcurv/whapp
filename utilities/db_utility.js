@@ -116,7 +116,7 @@ function fetchAllSkills(callback) {
         let all_skills = [];
         
         profiles.forEach((profile) => {
-          profile["skills"].forEach(function(skill) {
+          profile["skills"].forEach( (skill) => {
             // if ( all_skills.indexOf(skill + '\n') < 0 ) {
             //   all_skills.push(skill + '\n');
             if ( all_skills.indexOf(skill) < 0 ) {
@@ -257,8 +257,8 @@ function fetchProfilesByTeamName(team_domain, callback) {
 */
 function getNormalizedSkill(current_skill) {
   var match_skill = current_skill;
-  for (var skill in data_dictionary) {
-    data_dictionary[skill].forEach(function (name_variant) {
+  for (let skill in data_dictionary) {
+    data_dictionary[skill].forEach( (name_variant) => {
       if (current_skill.toLowerCase() === name_variant.toLowerCase()) {
         match_skill = skill;
       }
